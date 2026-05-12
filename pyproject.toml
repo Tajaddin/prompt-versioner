@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prompt-versioner"
+version = "0.1.0"
+description = "Git-style prompt management with named versions, A/B traffic splits, and regression detection on a saved eval set."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Tajaddin Gafarov", email = "gafarovtajaddin@gmail.com" }]
+keywords = ["llm", "prompts", "versioning", "ab-testing", "regression", "cli"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "click>=8.1",
+    "pydantic>=2.5",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[project.scripts]
+prompt = "prompt_versioner.cli:cli"
+
+[project.urls]
+Homepage = "https://github.com/Tajaddin/prompt-versioner"
+Repository = "https://github.com/Tajaddin/prompt-versioner"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]
