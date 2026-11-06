@@ -122,9 +122,12 @@ class PromptStore:
                 "VALUES (?, ?, ?, ?, ?, ?, ?)",
                 (name, sha, body, message, author, now, meta_json),
             )
-        return PromptVersion(
-            name=name, sha=sha, body=body, message=message, author=author, created_at=now, meta=meta or {}
-        )
+            # On a duplicate body the insert is ignored; return the row that is actually stored.
+            row = self._conn.execute(
+                "SELECT name, sha, body, message, author, created_at, meta_json FROM prompt_versions WHERE name = ? AND sha = ?",
+                (name, sha),
+            ).fetchone()
+        return self._row_to_version(row)
 
     def get(self, name: str, sha: str) -> PromptVersion | None:
         with self._lock:

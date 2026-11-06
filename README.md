@@ -2,7 +2,7 @@
 
 > Git-style prompt management with named versions, deterministic A/B traffic splits, and regression detection on a saved eval set. **Stdlib + click + pydantic only.** Single SQLite file = your prompt repo.
 
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Tests](https://img.shields.io/badge/tests-21%20passing-brightgreen)](#tests) [![Python](https://img.shields.io/badge/python-3.10%2B-blue)]()
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Tests](https://img.shields.io/badge/tests-22%20passing-brightgreen)](#tests) [![Python](https://img.shields.io/badge/python-3.10%2B-blue)]()
 
 ## Why this exists
 
@@ -10,7 +10,7 @@ Most teams version prompts in a Google Doc, a spreadsheet, or `prompts/*.py` fil
 
 `prompt-versioner` is one SQLite file plus a CLI that gives you the git mental model on top:
 
-* **Commits** are content-addressed (`sha` = sha1 of body, truncated to 12 chars). Identical bodies dedupe automatically.
+* **Commits** are content-addressed (`sha` = sha1 of body, truncated to 12 chars). Identical bodies dedupe automatically: re-committing one returns the version already stored, with its original message, author and timestamp.
 * **Tags** point at one sha per name: `production`, `staging`, `experiment-3`. Move them like git tags.
 * **Eval results** are durable rows attached to `(name, sha, eval_set)` — `prompt compare` exits non-zero on regression so it slots into CI.
 * **A/B splits** are deterministic from a user/request key, so the same caller always lands on the same arm — no leaks, no flapping.
@@ -151,12 +151,12 @@ pytest -q
 ```
 
 ```
-21 passed in 0.21s
+22 passed in 0.15s
 ```
 
 Tests cover:
 
-* `commit` is content-addressed and deduplicates identical bodies
+* `commit` is content-addressed, deduplicates identical bodies and returns the stored version on a duplicate
 * `tag` insert + update + unknown-sha rejection
 * `record_eval` rejects out-of-range counts; `latest_eval` returns the most recent
 * DB persists across handles
@@ -174,7 +174,7 @@ Tests cover:
 │   ├── traffic.py      # Deterministic A/B TrafficSplit + choose()
 │   ├── evaluator.py    # EvalRunner + compare() (regression detection)
 │   └── cli.py          # `prompt` CLI (click)
-└── tests/              # 21 pytest cases
+└── tests/              # 22 pytest cases
 ```
 
 ## Limitations
