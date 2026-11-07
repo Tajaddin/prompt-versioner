@@ -26,6 +26,14 @@ def test_identical_commits_dedup() -> None:
     assert len(s.history("p")) == 1
 
 
+def test_duplicate_commit_returns_the_stored_version() -> None:
+    s = PromptStore(":memory:")
+    v1 = s.commit("p", "same body", message="first", author="ana", meta={"v": 1})
+    v2 = s.commit("p", "same body", message="second", author="ben", meta={"v": 2})
+    assert v2 == v1
+    assert v2 == s.get("p", v1.sha)
+
+
 def test_different_bodies_get_different_shas() -> None:
     s = PromptStore(":memory:")
     v1 = s.commit("p", "body A")
